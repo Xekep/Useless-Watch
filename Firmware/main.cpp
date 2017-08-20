@@ -340,16 +340,84 @@ inline void USART_Init(uint8_t ubrr)
 	// Установка режима работы USART: асинхронный, размер данных 8 бит,
 	//  1 стоп бит, бит четности выключен
 	UCSR0C = (3<<UCSZ00);
-} inline bool parseNMEAMessage(){	uint8_t length = 0;	uint8_t checkSum = 0;	uint8_t _checkSum = 0;	char* pTime = NULL;	if (bufferUSART[0] == '$')	{		length = (uint8_t)strlen(bufferUSART);				if (length > 10)		{			if (strstr(bufferUSART, "$GPGGA") != NULL ||				strstr(bufferUSART, "$GPRMC") != NULL)			{				checkSum = strtoul(&bufferUSART[length-2], NULL, 16);							if (checkSum != 0)				{					// Время					pTime = strstr(bufferUSART, ",");										if (pTime != NULL)					{						pTime++;						for (uint8_t i = 0; i<6; i++)						{							if (pTime[i] < '0' || pTime[i] > '9')								return false;						}						GPSTimeHour = (pTime[0]-'0')*10+(pTime[1]-'0');						GPSTimeMin = (pTime[2]-'0')*10+(pTime[3]-'0');						GPSTimeSec = (pTime[4]-'0')*10+(pTime[5]-'0');						// Подсчет контрольной суммы между $ и *						for (int i = 1; i < length-3; i++) {
+}
+
+ inline bool parseNMEAMessage()
+{
+	uint8_t length = 0;
+	uint8_t checkSum = 0;
+	uint8_t _checkSum = 0;
+	char* pTime = NULL;
+
+	if (bufferUSART[0] == '$')
+	{
+		length = (uint8_t)strlen(bufferUSART);
+		
+		if (length > 10)
+		{
+			if (strstr(bufferUSART, "$GPGGA") != NULL ||
+				strstr(bufferUSART, "$GPRMC") != NULL)
+			{
+				checkSum = strtoul(&bufferUSART[length-2], NULL, 16);
+			
+				if (checkSum != 0)
+				{
+					// Время
+					pTime = strstr(bufferUSART, ",");
+					
+					if (pTime != NULL)
+					{
+						pTime++;
+
+						for (uint8_t i = 0; i<6; i++)
+						{
+							if (pTime[i] < '0' || pTime[i] > '9')
+								return false;
+						}
+
+						GPSTimeHour = (pTime[0]-'0')*10+(pTime[1]-'0');
+						GPSTimeMin = (pTime[2]-'0')*10+(pTime[3]-'0');
+						GPSTimeSec = (pTime[4]-'0')*10+(pTime[5]-'0');
+
+						// Подсчет контрольной суммы между $ и *
+						for (int i = 1; i < length-3; i++) {
 							_checkSum ^= bufferUSART[i];
-						}						if (_checkSum == checkSum)							return true;					}				}			}		}	}	return false;}inline void syncTime(){	NMEAMessageReceived = false;	startSyncTime = true;}inline void checkTiltSensors(){	if (!tiltSensor1 && tiltSensor2)
+						}
+
+						if (_checkSum == checkSum)
+							return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+inline void syncTime()
+{
+	NMEAMessageReceived = false;
+	startSyncTime = true;
+}
+
+inline void checkTiltSensors()
+{
+	if (!tiltSensor1 && tiltSensor2)
 	{
 		currentDisplayMode = displayNormal;
 	}
 	else if (tiltSensor1 && !tiltSensor2)
 	{
 		currentDisplayMode = displayFlipped;
-	}}bool CheckGPS(){	if (!startSyncTime) return false;	if (!NMEAMessageReceived) return false;
+	}
+}
+
+bool CheckGPS()
+{
+	if (!startSyncTime) return false;
+
+	if (!NMEAMessageReceived) return false;
+
 	if (parseNMEAMessage())
 	{
 		startSyncTime = false;
@@ -360,4 +428,35 @@ inline void USART_Init(uint8_t ubrr)
 	{
 		NMEAMessageReceived = false;
 		return false;
-	}}ISR(USART_RX_vect){	static uint8_t bufferCount = 0;	char data = UDR0;		if (!NMEAMessageReceived)	{		if (bufferCount >= sizeof(bufferUSART))			bufferCount = 0;				if (data == '$')		{			bufferCount = 0;			bufferUSART[bufferCount] = data;			bufferCount++;		}		else if (data == '\r')		{			bufferUSART[bufferCount] = 0;			bufferCount = 0;			NMEAMessageReceived = true;		}		else		{			bufferUSART[bufferCount] = data;			bufferCount++;		}	}}
+	}
+}
+
+ISR(USART_RX_vect)
+{
+	static uint8_t bufferCount = 0;
+	char data = UDR0;
+	
+	if (!NMEAMessageReceived)
+	{
+		if (bufferCount >= sizeof(bufferUSART))
+			bufferCount = 0;
+		
+		if (data == '$')
+		{
+			bufferCount = 0;
+			bufferUSART[bufferCount] = data;
+			bufferCount++;
+		}
+		else if (data == '\r')
+		{
+			bufferUSART[bufferCount] = 0;
+			bufferCount = 0;
+			NMEAMessageReceived = true;
+		}
+		else
+		{
+			bufferUSART[bufferCount] = data;
+			bufferCount++;
+		}
+	}
+}
