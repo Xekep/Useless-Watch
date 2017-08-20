@@ -11,42 +11,38 @@ enum clockMode { clockTime, clockSetTimezone, clockSeconds };
 enum displayMode { displayNormal, displayFlipped };
 enum segments { A, B, C, D, E, F, G, DP };
 
-uint8_t displayDigits[][4] = {
-								{ displayDigit1, displayDigit2, displayDigit3, displayDigit4 },
-								{ displayDigit4, displayDigit3, displayDigit2, displayDigit1 }
-							};
+uint8_t displayDigits[][4] = { { displayDigit1, displayDigit2, displayDigit3, displayDigit4 },
+			       { displayDigit4, displayDigit3, displayDigit2, displayDigit1 } };
 
-uint8_t symbols[][10] = {
-							{ zero, one, two, three, four, five, six, seven, eight, nine },
-							{ zero_flipped, one_flipped, two_flipped, three_flipped, four_flipped, five_flipped, six_flipped, seven_flipped, eight_flipped, nine_flipped }
-						};
+uint8_t symbols[][10] = { { zero, one, two, three, four, five, six, seven, eight, nine },
+			  { zero_flipped, one_flipped, two_flipped, three_flipped, four_flipped, five_flipped, six_flipped, seven_flipped, eight_flipped, nine_flipped } };
 
 uint8_t hello[][10][4] = {
-							{
-								{ minus, minus, minus, minus },
-								{ symbol_H, minus, minus, minus },
-								{ symbol_E, symbol_H, minus, minus },
-								{ symbol_L, symbol_E, symbol_H, minus },
-								{ symbol_L, symbol_L, symbol_E, symbol_H },
-								{ symbol_O, symbol_L, symbol_L, symbol_E },
-								{ minus, symbol_O, symbol_L, symbol_L },
-								{ minus, minus, symbol_O, symbol_L },
-								{ minus, minus, minus, symbol_O },
-								{ minus, minus, minus, minus }
-							},
-							{
-								{ minus, minus, minus, minus },
-								{ symbol_H_flipped, minus, minus, minus },
-								{ symbol_E_flipped, symbol_H_flipped, minus, minus },
-								{ symbol_L_flipped, symbol_E_flipped, symbol_H_flipped, minus },
-								{ symbol_L_flipped, symbol_L_flipped, symbol_E_flipped, symbol_H_flipped },
-								{ symbol_O_flipped, symbol_L_flipped, symbol_L_flipped, symbol_E_flipped },
-								{ minus, symbol_O_flipped, symbol_L_flipped, symbol_L_flipped },
-								{ minus, minus, symbol_O_flipped, symbol_L_flipped },
-								{ minus, minus, minus, symbol_O_flipped },
-								{ minus, minus, minus, minus }
-							}
-						};
+				{
+					{ minus, minus, minus, minus },
+					{ symbol_H, minus, minus, minus },
+					{ symbol_E, symbol_H, minus, minus },
+					{ symbol_L, symbol_E, symbol_H, minus },
+					{ symbol_L, symbol_L, symbol_E, symbol_H },
+					{ symbol_O, symbol_L, symbol_L, symbol_E },
+					{ minus, symbol_O, symbol_L, symbol_L },
+					{ minus, minus, symbol_O, symbol_L },
+					{ minus, minus, minus, symbol_O },
+					{ minus, minus, minus, minus }
+				},
+				{
+					{ minus, minus, minus, minus },
+					{ symbol_H_flipped, minus, minus, minus },
+					{ symbol_E_flipped, symbol_H_flipped, minus, minus },
+					{ symbol_L_flipped, symbol_E_flipped, symbol_H_flipped, minus },
+					{ symbol_L_flipped, symbol_L_flipped, symbol_E_flipped, symbol_H_flipped },
+					{ symbol_O_flipped, symbol_L_flipped, symbol_L_flipped, symbol_E_flipped },
+					{ minus, symbol_O_flipped, symbol_L_flipped, symbol_L_flipped },
+					{ minus, minus, symbol_O_flipped, symbol_L_flipped },
+					{ minus, minus, minus, symbol_O_flipped },
+					{ minus, minus, minus, minus }
+				}
+			};
 
 uint8_t buffTime[8] = {0xff, 0xff , 0xff, 0xff};
 uint8_t buffTimezone[4] = {0xff, 0xff , 0xff, 0xff};
@@ -116,8 +112,8 @@ int main(void)
 	// Запускаем таймер отсчета времени
 	StartClockingTimer();
 
-    while (1) 
-    {
+	while (1) 
+	{
 		CheckGPS();
 		
 		statePinD = PIND&buttonsPins;
@@ -144,7 +140,7 @@ int main(void)
 		}
 			
 		_delay_ms(10);
-    }
+	}
 }
 
 ISR(TIMER2_OVF_vect)
