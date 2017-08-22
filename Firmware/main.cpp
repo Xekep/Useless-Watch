@@ -398,13 +398,15 @@ inline void syncTime()
 
 inline void checkTiltSensors()
 {
-	if (!tiltSensor1 && tiltSensor2)
+	if (!tiltSensor1)
 	{
-		currentDisplayMode = displayNormal;
+		if (tiltSensor2)
+			currentDisplayMode = displayNormal;
 	}
-	else if (tiltSensor1 && !tiltSensor2)
+	else
 	{
-		currentDisplayMode = displayFlipped;
+		if(!tiltSensor2)
+			currentDisplayMode = displayFlipped;
 	}
 }
 
