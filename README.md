@@ -1,3 +1,5 @@
+[![Watch the video](https://i.ytimg.com/vi/YxNCa986Xg4/maxresdefault.jpg)](https://www.youtube.com/watch?v=YxNCa986Xg4)
+
 # Useless-Watch — Часы c GPS модулем.
 
 ## Особенности
